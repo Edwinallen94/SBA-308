@@ -97,4 +97,22 @@ try {
       let learnerData = { id: learner_id };
       let totalWeightedScore = 0;
       let totalPossiblePoints = 0;
-  
+
+// this section i will be looping through the assignment/ using a switch - break
+      let assignment = null;
+      for (let k = 0; k < assignmentGroup.assignments.length; k++) {
+        if (assignmentGroup.assignments[k].id === submission.assignment_id) {
+          assignment = assignmentGroup.assignments[k];
+          break;
+        }
+      }
+     
+       if (assignment !== null && assignment.points_possible > 0) { //checking to see if the assignment is able to be found 
+
+        if (assignment.due_at > submission.submission.submitted_at) {
+          let score = submission.submission.score;
+
+
+           if (submission.submission.submitted_at > assignment.due_at) { //decuct points if users submission is late 
+           score = score - assignment.points_possible * 0.1;
+            }
