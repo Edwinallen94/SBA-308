@@ -116,3 +116,22 @@ try {
            if (submission.submission.submitted_at > assignment.due_at) { //decuct points if users submission is late 
            score = score - assignment.points_possible * 0.1;
             }
+
+           // this will mark the % for the assignment 
+            learnerData[assignment.id] =
+              (score / assignment.points_possible) * 100;
+
+                        /// adds the weighted avg calculation 
+            totalWeightedScore += score;
+            totalPossiblePoints += assignment.points_possible;
+          }
+        } else {
+          throw new Error(
+            `Invalid assignment data or points_possible is 0 for assignment ID ${submission.assignment_id}`
+          );
+        }
+      }
+    };
+
+
+      
