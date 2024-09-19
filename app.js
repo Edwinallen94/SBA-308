@@ -74,15 +74,12 @@ let result = []; // created an empty array for my results.
 
 //creating a try, catch for any errors
 try {
-
   if (assignmentGroup.course_id !== courseInfo.id) {
     throw new Error(
       `Assignment group ${assignmentGroup.id} does not belong to course ${courseInfo.id}`
     );
-
-
   }
-// starting my for loop to identify the learners ID
+  // starting my for loop to identify the learners ID
   let learners = [];
   for (let i = 0; i < learnerSubmissions.length; i++) {
     let learner_id = learnerSubmissions[i].learner_id;
@@ -91,47 +88,59 @@ try {
     }
   }
 
-   
-    for (let i = 0; i < learners.length; i++) {
-      let learner_id = learners[i];
-      let learnerData = { id: learner_id };
-      let totalWeightedScore = 0;
-      let totalPossiblePoints = 0;
+  for (let i = 0; i < learners.length; i++) {
+    let learner_id = learners[i];
+    let learnerData = { id: learner_id };
+    let totalWeightedScore = 0;
+    let totalPossiblePoints = 0;
 
-// this section i will be looping through the assignment/ using a switch - break
-      let assignment = null;
-      for (let k = 0; k < assignmentGroup.assignments.length; k++) {
-        if (assignmentGroup.assignments[k].id === submission.assignment_id) {
-          assignment = assignmentGroup.assignments[k];
-          break;
-        }
+    // this section i will be looping through the assignment/ using a switch - break
+    let assignment = null;
+    for (let k = 0; k < assignmentGroup.assignments.length; k++) {
+      if (assignmentGroup.assignments[k].id === submission.assignment_id) {
+        assignment = assignmentGroup.assignments[k];
+        break;
       }
-     
-       if (assignment !== null && assignment.points_possible > 0) { //checking to see if the assignment is able to be found 
+    }
 
-        if (assignment.due_at > submission.submission.submitted_at) {
-          let score = submission.submission.score;
+    if (assignment !== null && assignment.points_possible > 0) {
+      //checking to see if the assignment is able to be found
 
+      if (assignment.due_at > submission.submission.submitted_at) {
+        let score = submission.submission.score;
 
-           if (submission.submission.submitted_at > assignment.due_at) { //decuct points if users submission is late 
-           score = score - assignment.points_possible * 0.1;
-            }
-
-           // this will mark the % for the assignment 
-            learnerData[assignment.id] =
-              (score / assignment.points_possible) * 100;
-
-                        /// adds the weighted avg calculation 
-            totalWeightedScore += score;
-            totalPossiblePoints += assignment.points_possible;
-          }
-        } else {
-          throw new Error(
-            `Invalid assignment data or points_possible is 0 for assignment ID ${submission.assignment_id}`
-          );
+        if (submission.submission.submitted_at > assignment.due_at) {
+          //decuct points if users submission is late
+          score = score - assignment.points_possible * 0.1;
         }
-      }
-    };
- // now its time to calc the avg score for the learner 
 
-      
+        // this will mark the % for the assignment
+        learnerData[assignment.id] = (score / assignment.points_possible) * 100;
+
+        /// adds the weighted avg calculation
+        totalWeightedScore += score;
+        totalPossiblePoints += assignment.points_possible;
+      }
+    } else {
+      throw new Error(
+        `Invalid assignment data or points_possible is 0 for assignment ID ${submission.assignment_id}`
+      );
+    }
+  }
+
+  // now its time to calc the avg score for the learner
+  learnerData.avg = (totalWeightedScore / totalPossiblePoints) * 100;
+  result.push(learnerData);
+} catch (error) {
+  console.error("Error:", error.message);
+  return []; // Return an empty result if any error occurs
+}
+
+return result; // return the intial result
+
+let learnerResults = getLearnerData(
+  courseInfo,
+  assignmentGroup,
+  learnerSubmissions
+);
+console.log(learnerResults);
