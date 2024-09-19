@@ -132,6 +132,6 @@ try {
         }
       }
     };
-
+ // now its time to calc the avg score for the learner 
 
       
