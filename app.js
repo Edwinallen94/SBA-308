@@ -15,11 +15,61 @@
 // 2. Four different data types (courseInfo, assignmentGroup, assignmentInfo and learnerSubmission)
 // 3. should throw an error (try/catch??)
 
-function dataGatherer(
-  courseInfo,
-  assignmentGroup,
-  assignmentInfo,
-  learnerSubmission
-) {
-  //adding each data types as parmaters
+//Starting code using loops, control flow and functions
+
+const courseInfo = {
+  id: 43,
+  name: "Per Scholas RTT-43",
+};
+
+const assignmentGroup = {
+  id: 12345,
+  name: "SBA",
+  course_id: 308,
+  group_weight: 25,
+  assignments: [
+    {
+      id: 1,
+      name: "Complete the SBA",
+      due_at: "2023-01-25",
+      points_possible: 50,
+    },
+    {
+      id: 2,
+      name: "Write a Function",
+      due_at: "2023-02-27",
+      points_possible: 150,
+    },
+    {
+      id: 3,
+      name: "Code the World",
+      due_at: "3156-11-15",
+      points_possible: 500,
+    },
+  ],
+};
+
+const assignmentInfo = {
+  id: 23,
+  name: "",
+  due_at: "",
+  points_possible: 500,
+};
+
+const learnerSubmissions = {
+  learner_id: 125,
+  assignment_id: 1,
+  submission: {
+    submitted_at: "2023-01-25",
+    score: 47,
+  },
+};
+
+//adding each data types as parmaters
+function getLearnerData(courseInfo, assignmentGroup, learnerSubmission) {
+  //
 }
+
+let result = []; // created an empty array for my results.
+
+//creating a try, catch for any errors
