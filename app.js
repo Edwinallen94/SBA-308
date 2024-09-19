@@ -73,3 +73,28 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmission) {
 let result = []; // created an empty array for my results.
 
 //creating a try, catch for any errors
+try {
+
+  if (assignmentGroup.course_id !== courseInfo.id) {
+    throw new Error(
+      `Assignment group ${assignmentGroup.id} does not belong to course ${courseInfo.id}`
+    );
+
+
+  }
+// starting my for loop to identify the learners ID
+  let learners = [];
+  for (let i = 0; i < learnerSubmissions.length; i++) {
+    let learner_id = learnerSubmissions[i].learner_id;
+    if (learners.indexOf(learner_id) === -1) {
+      learners.push(learner_id);
+    }
+  }
+
+   
+    for (let i = 0; i < learners.length; i++) {
+      let learner_id = learners[i];
+      let learnerData = { id: learner_id };
+      let totalWeightedScore = 0;
+      let totalPossiblePoints = 0;
+  
