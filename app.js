@@ -16,7 +16,6 @@
 // 3. should throw an error (try/catch??)
 
 //Starting code using loops, control flow and functions
-
 const courseInfo = {
   id: 43,
   name: "Per Scholas RTT-43",
@@ -25,7 +24,7 @@ const courseInfo = {
 const assignmentGroup = {
   id: 12345,
   name: "SBA",
-  course_id: 308,
+  course_id: 43,
   group_weight: 25,
   assignments: [
     {
@@ -49,13 +48,6 @@ const assignmentGroup = {
   ],
 };
 
-const assignmentInfo = {
-  id: 23,
-  name: "",
-  due_at: "",
-  points_possible: 500,
-};
-
 const learnerSubmissions = {
   learner_id: 125,
   assignment_id: 1,
@@ -65,79 +57,84 @@ const learnerSubmissions = {
   },
 };
 
-//adding each data types as parmaters
-function getLearnerData(courseInfo, assignmentGroup, learnerSubmission) {
-  //
-}
+//adding each data types as parameters
+function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
+  let result = []; // created an empty array for my results.
 
-let result = []; // created an empty array for my results.
-
-//creating a try, catch for any errors
-try {
-  if (assignmentGroup.course_id !== courseInfo.id) {
-    throw new Error(
-      `Assignment group ${assignmentGroup.id} does not belong to course ${courseInfo.id}`
-    );
-  }
-  // starting my for loop to identify the learners ID
-  let learners = [];
-  for (let i = 0; i < learnerSubmissions.length; i++) {
-    let learner_id = learnerSubmissions[i].learner_id;
-    if (learners.indexOf(learner_id) === -1) {
-      learners.push(learner_id);
-    }
-  }
-
-  for (let i = 0; i < learners.length; i++) {
-    let learner_id = learners[i];
-    let learnerData = { id: learner_id };
-    let totalWeightedScore = 0;
-    let totalPossiblePoints = 0;
-
-    // this section i will be looping through the assignment/ using a switch - break
-    let assignment = null;
-    for (let k = 0; k < assignmentGroup.assignments.length; k++) {
-      if (assignmentGroup.assignments[k].id === submission.assignment_id) {
-        assignment = assignmentGroup.assignments[k];
-        break;
-      }
-    }
-
-    if (assignment !== null && assignment.points_possible > 0) {
-      //checking to see if the assignment is able to be found
-
-      if (assignment.due_at > submission.submission.submitted_at) {
-        let score = submission.submission.score;
-
-        if (submission.submission.submitted_at > assignment.due_at) {
-          //decuct points if users submission is late
-          score = score - assignment.points_possible * 0.1;
-        }
-
-        // this will mark the % for the assignment
-        learnerData[assignment.id] = (score / assignment.points_possible) * 100;
-
-        /// adds the weighted avg calculation
-        totalWeightedScore += score;
-        totalPossiblePoints += assignment.points_possible;
-      }
-    } else {
+  //creating a try, catch for any errors
+  try {
+    // Check if assignmentGroup belongs to the correct course
+    if (assignmentGroup.course_id !== courseInfo.id) {
       throw new Error(
-        `Invalid assignment data or points_possible is 0 for assignment ID ${submission.assignment_id}`
+        `Assignment group ${assignmentGroup.id} does not belong to course ${courseInfo.id}`
       );
     }
+
+    // starting my for loop to identify the learners ID
+    let learners = [];
+    let learner_id = learnerSubmissions.learner_id;
+    if (learners.indexOf(learner_id) === -1) {
+      learners.push(learner_id); // Add learner ID if not already present
+    }
+
+    // Loop through learners
+    for (let i = 0; i < learners.length; i++) {
+      let learner_id = learners[i];
+      let learnerData = { id: learner_id };
+      let totalWeightedScore = 0;
+      let totalPossiblePoints = 0;
+
+      // Get submission details from learnerSubmissions
+      let submission = learnerSubmissions.submission;
+
+      // Loop through the assignments using a switch - break
+      let assignment = null;
+      for (let k = 0; k < assignmentGroup.assignments.length; k++) {
+        if (
+          assignmentGroup.assignments[k].id === learnerSubmissions.assignment_id
+        ) {
+          assignment = assignmentGroup.assignments[k]; // Assign matching assignment
+          break;
+        }
+      }
+
+      if (assignment !== null && assignment.points_possible > 0) {
+        // Checking to see if the assignment is able to be found
+        if (assignment.due_at >= submission.submitted_at) {
+          let score = submission.score;
+
+          // Deduct points if user's submission is late
+          if (submission.submitted_at > assignment.due_at) {
+            score = score - assignment.points_possible * 0.1; // Deduct 10% for late submission
+          }
+
+          // This will mark the % for the assignment
+          learnerData[assignment.id] =
+            (score / assignment.points_possible) * 100;
+
+          // Adds the weighted average calculation
+          totalWeightedScore += score;
+          totalPossiblePoints += assignment.points_possible;
+        }
+
+        // Calculate the average score for the learner
+        learnerData.avg = (totalWeightedScore / totalPossiblePoints) * 100;
+        result.push(learnerData);
+      } else {
+        throw new Error(
+          `Invalid assignment data or points_possible is 0 for assignment ID ${learnerSubmissions.assignment_id}`
+        );
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    return []; // Return an empty result if any error occurs
   }
 
-  // now its time to calc the avg score for the learner
-  learnerData.avg = (totalWeightedScore / totalPossiblePoints) * 100;
-  result.push(learnerData);
-} catch (error) {
-  console.error("Error:", error.message);
-  return []; // Return an empty result if any error occurs
+  return result; // Return the final result
 }
 
-return result; // return the intial result
-
+// Call the function with the course, assignment group, and learner submissions
 let learnerResults = getLearnerData(
   courseInfo,
   assignmentGroup,
